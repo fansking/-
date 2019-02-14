@@ -14,8 +14,7 @@ class Solution:
                 if i!=j and nums[i]+nums[j]==target:
                     return [i,j]
 
-  
-    
+ 
     
     def addTwoNumbers(self, l1, l2):
         """
@@ -135,6 +134,54 @@ class Solution:
         :type s: str
         :rtype: str
         """
+        def expand(s,left,right):
+            L=left
+            R=right
+            while L>=0 and R<len(s) and s[L]==s[R]:
+                L-=1
+                R+=1
+            return R-L-1
+        if len(s)==0 or s==None:
+            return ""
+        start=0
+        end=0
+        for i in range(len(s)):
+            len1=expand(s,i,i)
+            len2=expand(s,i,i+1)
+            if len1>len2:
+                length=len1
+            else:
+                length=len2
+            if length>end-start:
+                start=i-int((length-1)/2)
+                end=i+int(length/2)
+        return s[start:end+1]
+    def reverse(self, x):
+        """
+        :type x: int
+        :rtype: int
+        """
+        import math
+        s=str(x)
+        num=0
+        if s[0]=="-":
+            for i in range(1,len(s)):
+               num+=int(s[i])* math.pow(10,i-1)
+            num=-1*num
+        elif s[0]=="+":
+            for i in range(1,len(s)):
+               num+=int(s[i])* math.pow(10,i-1)
+        elif s[0].isdigit():
+            for i in range(0,len(s)):
+               num+=int(s[i])* math.pow(10,i)
+        else:
+            return 0
+        if num>math.pow(2,31)-1:
+            return 0
+        elif num<-math.pow(2,31):
+            return 0
+        else:
+            return int(num)       
 
 
     def myAtoi(self, str):
@@ -169,6 +216,151 @@ class Solution:
             return -int(math.pow(2,31))
         else:
             return int(num)
+    def isPalindrome(self, x):
+        """
+        :type x: int
+        :rtype: bool
+        """
+        #不转为字符串解决
+        import math
+        if x<0:
+            return False
+        elif x<10:
+            return True
+        else:
+            length=int(math.log10(x))+1
+            flag=True
+            if length%2==0:
+                for i in range(int(length/2)):
+                    if int(x/math.pow(10,i))%10!=int(x/math.pow(10,length-i-1))%10:
+                        flag=False
+            else:
+                for i in range(int(length/2)):
+                    if int(x/math.pow(10,i))%10!=int(x/math.pow(10,length-i-1))%10:
+                        flag=False
+        return flag
 
+    def maxArea(self, height):
+        """
+        :type height: List[int]
+        :rtype: int
+        """
+        def min(x,y):
+            if x<y:
+                return x
+            else:
+                return y
+        def max(x,y):
+            if x>y:
+                return x
+            else:
+                return y
+        start=0
+        end=len(height)-1
+        Area=0
+        length=end-start
+        while start<=end:
+            Area=max(Area,length*min(height[start],height[end]))
+            length-=1
+            if height[start]>height[end]:
+                end-=1
+            else:
+                start+=1
+        return Area
+
+    def longestCommonPrefix(self, strs):
+        """
+        :type strs: List[str]
+        :rtype: str
+        """
+        i=0
+        result=""
+        if len(strs)==0:
+
+            return ""
+        while True:
+            for k in range(len(strs)):
+                if i>=len(strs[k]) or strs[k][i]!=strs[0][i]:
+                    return result
+            result+=strs[0][i]
+            i+=1
+
+    def threeSum(self, nums):
+        """
+        :type nums: List[int]
+        :rtype: List[List[int]]
+        """
+        nums.sort()
+        res =[]
+        i = 0
+        for i in range(len(nums)):
+            if i == 0 or nums[i]>nums[i-1]:
+                l = i+1
+                r = len(nums)-1
+                while l < r:
+                    s = nums[i] + nums[l] +nums[r]
+                    if s ==0:
+                        res.append([nums[i],nums[l],nums[r]])
+                        l +=1
+                        r -=1
+                        while l < r and nums[l] == nums[l-1]:
+                            l += 1
+                        while r > l and nums[r] == nums[r+1]:
+                            r -= 1
+                    elif s>0:
+                        r -=1
+                    else :
+                        l +=1
+        return res
+
+    def threeSumClosest(self, nums, target):
+        """
+        :type nums: List[int]
+        :type target: int
+        :rtype: int
+        """
+        nums.sort()
+        res =None
+        i = 0
+        for i in range(len(nums)):
+            if i == 0 or nums[i]>nums[i-1]:
+                l = i+1
+                r = len(nums)-1
+                while l < r:
+                    s = nums[i] + nums[l] +nums[r]
+                    if res==None or abs(s-target)<abs(res-target):
+                        res=s
+
+                    if s>target:
+                        r -=1
+                    elif s==target:
+                        return s
+                    else :
+                        l +=1
+        return res
+
+    def isValid(self, s):
+        """
+        :type s: str
+        :rtype: bool
+        """
+        if len(s)==0:
+            return True
+        stack=[]
+        i=0
+        while i<len(s):
+            if s[i]=="(" or s[i]=="{" or s[i]=="[":
+                stack.append(s[i])
+            if s[i]==")" or s[i]=="}" or s[i]=="]":
+                if len(stack)!=0:
+                    if (s[i]==")" and stack.pop()!="(") or (s[i]=="}" and stack.pop()!="{") or (s[i]=="]" and stack.pop()!="["):
+                        return False
+                else:
+                    return False
+            i+=1
+        if len(stack)==0:
+            return True
+        else:
+            return False
 s=Solution()
-print(s.myAtoi("4193 with words"))
+print(s.threeSum([-1,0,1,2,-1,-4]))
